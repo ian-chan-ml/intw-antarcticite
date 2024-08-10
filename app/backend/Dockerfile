@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build the application from source
-FROM golang:1.23 AS build-stage
+FROM golang:1.22 AS build-stage
 
 WORKDIR /app
 
@@ -17,14 +17,14 @@ FROM build-stage AS test-stage
 RUN go test -v ./...
 
 # Deploy the application binary into a lean image
-FROM gcr.io/distroless/base-debian11 AS release-stage
+FROM alpine:latest AS release-stage
 
 WORKDIR /
 
 COPY --from=build-stage /antarcticite /antarcticite
 
 # Create a non-root user, grant ownership and switch user
-RUN useradd -m appuser
+RUN adduser -D appuser
 
 RUN chown appuser /antarcticite
 
