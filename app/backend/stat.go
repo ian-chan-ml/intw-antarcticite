@@ -57,6 +57,7 @@ func (s *OSMetrics) CPUMetrics(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "cpu system: %f %%\n", float64(systemDelta/totalDelta*100))
 	fmt.Fprintf(w, "cpu idle: %f %%\n", float64(idleDelta/totalDelta*100))
 }
+
 func (s *OSMetrics) UptimeMetrics(w http.ResponseWriter, r *http.Request) {
 	uptime, err := host.Uptime()
 	if err != nil {
@@ -65,4 +66,18 @@ func (s *OSMetrics) UptimeMetrics(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprintf(w, "Total uptime: %s\n", time.Duration(uptime)*time.Second)
+}
+
+func (s *OSMetrics) NetworkMetrics(w http.ResponseWriter, r *http.Request) {
+	networkStats, err := net.IOCounters(false)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, stat := range networkStats {
+		fmt.Fprintf(w, "Interface: %s\n", stat.Name)
+		fmt.Fprintf(w, "Received: %d bytes\n", stat.BytesRecv)
+		fmt.Fprintf(w, "Sent: %d bytes\n", stat.BytesSent)
+	}
 }
