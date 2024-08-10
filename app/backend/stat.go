@@ -57,3 +57,12 @@ func (s *OSMetrics) CPUMetrics(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "cpu system: %f %%\n", float64(systemDelta/totalDelta*100))
 	fmt.Fprintf(w, "cpu idle: %f %%\n", float64(idleDelta/totalDelta*100))
 }
+func (s *OSMetrics) UptimeMetrics(w http.ResponseWriter, r *http.Request) {
+	uptime, err := host.Uptime()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "Total uptime: %s\n", time.Duration(uptime)*time.Second)
+}
