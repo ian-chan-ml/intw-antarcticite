@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  controller.log.format: json
+  controller.operation.processors: "25"
+  controller.status.processors: "50"
+  reposerver.log.format: json
+  server.log.format: json
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm

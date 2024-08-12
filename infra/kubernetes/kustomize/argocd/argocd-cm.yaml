@@ -1,0 +1,75 @@
+apiVersion: v1
+data:
+  resource.customizations.actions.apps_Deployment: |
+    discovery.lua: |
+      actions = {}
+
+      actions["restart"] = {}
+
+      -- actions defaults to disabled
+      actions["scaleReplicaToZero"] = {["disabled"] = true}
+      actions["scaleReplicaToOne"] = {["disabled"] = true}
+
+      local replicas
+      -- get current replica count
+      if obj.spec.replicas ~= nil then
+          replicas = obj.spec.replicas
+      end
+
+      if replicas == 0 then
+          -- enable scaleReplicaToOne if current replica count is 0
+          actions["scaleReplicaToOne"]["disabled"] = false
+      else
+          -- enable scaleReplicaToZero if current replica count is not 0
+          actions["scaleReplicaToZero"]["disabled"] = false
+      end
+      return actions
+    definitions:
+    - name: restart
+      action.lua: |
+        local os = require("os")
+        if obj.spec.template.metadata == nil then
+            obj.spec.template.metadata = {}
+        end
+        if obj.spec.template.metadata.annotations == nil then
+            obj.spec.template.metadata.annotations = {}
+        end
+        obj.spec.template.metadata.annotations["kubectl.kubernetes.io/restartedAt"] = os.date("!%Y-%m-%dT%XZ")
+        return obj
+    - name: scaleReplicaToZero
+      action.lua: |
+        obj.spec.replicas = 0
+        return obj
+    - name: scaleReplicaToOne
+      action.lua: |
+        obj.spec.replicas = 1
+        return obj
+  resource.customizations.ignoreDifferences.admissionregistration.k8s.io_MutatingWebhookConfiguration: |
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
+    - /webhooks/0/failurePolicy
+  resource.customizations.ignoreDifferences.admissionregistration.k8s.io_ValidatingWebhookConfiguration: |
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
+    - /webhooks/0/failurePolicy
+  resource.exclusions: |
+    - apiGroups:
+      - "*"
+      kinds:
+      - Backup
+      clusters:
+      - "*"
+  statusbadge.enabled: "true"
+  exec.enabled: "true"
+  # url: https://argocd.shared-ews.engine.tech
+  timeout.reconciliation: "20s"
+  kustomize.buildOptions: --enable-helm --enable-alpha-plugins
+  # extension.config: |-
+  #   extensions:
+  #     - name: metrics
+  #       backend:
+  #         services:
+  #           - url: http://prometheus-prometheus.monitoring.svc.cluster.local:9090
+kind: ConfigMap
+metadata:
+  name: argocd-cm
