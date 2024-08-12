@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "antarticite-fe.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "antarticite-fe.name" . }}
+    helm.sh/chart: {{ include "antarticite-fe.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    tags.datadoghq.com/service: {{ include "antarticite-fe.name" . }}
+    tags.datadoghq.com/env: {{ .Values.releaseStage }}
+    tags.datadoghq.com/version: {{ .Values.image.tag | quote }}
+  annotations:
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "antarticite-fe.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      annotations:
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "antarticite-fe.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        tags.datadoghq.com/service: {{ include "antarticite-fe.name" . }}
+        tags.datadoghq.com/env: {{ .Values.releaseStage }}
+        tags.datadoghq.com/version: {{ .Values.image.tag | quote }}
+    spec:
+      # serviceAccountName: {{ include "antarticite-fe.fullname" . }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.service.targetPort }}
+          protocol: TCP
+        livenessProbe:
+{{ toYaml .Values.livenessProbe | trim | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.readinessProbe | trim | indent 10 }}
+        env:
+        # DD_* variables are for Datadog APM agent tagging
+        - name: DD_SERVICE
+          value: {{ include "antarticite-fe.name" . }}
+        - name: DD_ENV
+          value: {{ .Values.datadogEnv }}
+        - name: DD_VERSION
+          value: {{ .Values.image.tag | quote }}
+        # this picks up the serving worker node's IP which will be used by datadog to tag infra related metrics
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        envFrom:
+        - configMapRef:
+            name: {{ .Release.Name }}-configmap
+        - secretRef:
+            name: {{ .Release.Name }}-secrets
+            optional: true
+        resources:
+{{ toYaml .Values.resources | trim | indent 10 }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | trim | indent 8 }}
+      affinity:
+{{ toYaml .Values.affinity | trim | indent 8 }}
+      tolerations:
+{{ toYaml .Values.tolerations | trim | indent 8 }}

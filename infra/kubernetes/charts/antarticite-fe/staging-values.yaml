@@ -1,0 +1,10 @@
+releaseStage: staging
+
+env:
+  ANTARTICITE_BACKEND_HOST: "antarticite-be.staging"
+  MAINTENANCE_MODE: "false"
+
+autoscale:
+  targetPercentage:
+    cpu: 80
+    memory: 70

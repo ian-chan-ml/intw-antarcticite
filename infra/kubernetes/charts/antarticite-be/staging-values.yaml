@@ -1,0 +1,7 @@
+releaseStage: staging
+
+autoscale:
+  targetPercentage:
+    cpu: 80
+    memory: 70
+

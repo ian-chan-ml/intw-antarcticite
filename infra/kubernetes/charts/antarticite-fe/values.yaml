@@ -1,0 +1,50 @@
+releaseStage: development
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 50M
+    memory: 512Mi
+
+autoscale:
+  minReplicas: 1
+  maxReplicas: 1
+  targetPercentage:
+    cpu: 70
+    memory: 70
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 8501
+  initialDelaySeconds: 60
+  timeoutSeconds: 1
+  periodSeconds: 60
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 8501
+  initialDelaySeconds: 60
+  timeoutSeconds: 1
+  periodSeconds: 60
+  successThreshold: 1
+  failureThreshold: 5
+
+image:
+  repository: 940482441378.dkr.ecr.ap-southeast-3.amazonaws.com/antarticite-fe
+  tag: dev
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8888
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,9 @@
+releaseStage: production
+
+autoscale:
+  minReplicas: 1
+  maxReplicas: 1 #temp till fix session issue
+  targetPercentage:
+    cpu: 80
+    memory: 70
+

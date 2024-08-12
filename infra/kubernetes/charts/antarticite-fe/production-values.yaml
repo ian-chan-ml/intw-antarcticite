@@ -1,0 +1,14 @@
+releaseStage: production
+
+env:
+  ANTARTICITE_BACKEND_HOST: "antarticite-be.production"
+  MAINTENANCE_MODE: "false"
+
+
+autoscale:
+  minReplicas: 1
+  maxReplicas: 2
+  targetPercentage:
+    cpu: 80
+    memory: 70
+
