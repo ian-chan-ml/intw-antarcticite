@@ -13,6 +13,12 @@ locals {
   }
 }
 
+resource "aws_eip" "nat" {
+  count = 3
+
+  vpc = true
+}
+
 ################################################################################
 # VPC Module
 ################################################################################
@@ -37,8 +43,10 @@ module "vpc" {
   database_subnets     = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 6)]
   database_subnet_tags = { Usage = "database" }
 
-  enable_nat_gateway = true
-  single_nat_gateway = true
+  enable_nat_gateway  = true
+  single_nat_gateway  = false
+  reuse_nat_ips       = true             # <= Skip creation of EIPs for the NAT Gateways
+  external_nat_ip_ids = aws_eip.nat.*.id # <= IPs specified here as input to the module
 
   tags = local.tags
 }

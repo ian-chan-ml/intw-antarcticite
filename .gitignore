@@ -41,3 +41,7 @@ MANIFEST
 ## .tfstate files
 *.tfstate
 *.tfstate.*
+**/.terraform.lock.hcl
+
+# Helm gitignore
+infra/kubernetes/kustomize/**/charts

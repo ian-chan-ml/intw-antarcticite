@@ -1,0 +1,11 @@
+[client]
+showErrorDetails = false
+
+[theme]
+primaryColor="#007acc"
+backgroundColor="#ffffff"
+secondaryBackgroundColor="#e6f7ff"
+textColor="#2c3e50"
+
+[server]
+port = 8888
