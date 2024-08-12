@@ -1,3 +1,13 @@
+terraform {
+  required_providers {
+    aws = {
+      source                = "hashicorp/aws"
+      version               = ">= 5.34"
+      configuration_aliases = [aws]
+    }
+  }
+}
+
 locals {
   region = "us-east-1"
   name   = "ecr-ex-${replace(basename(path.cwd), "_", "-")}"
