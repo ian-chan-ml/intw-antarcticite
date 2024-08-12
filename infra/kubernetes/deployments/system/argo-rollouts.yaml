@@ -1,0 +1,2 @@
+path: "infra/kubernetes/kustomize/argo-rollouts"
+namespace: "rollouts"

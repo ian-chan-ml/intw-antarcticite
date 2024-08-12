@@ -1,0 +1,2 @@
+path: "infra/kubernetes/kustomize/storage-classes"
+namespace: "kube-system"

@@ -1,0 +1,2 @@
+path: "infra/kubernetes/kustomize/kube-state-metrics"
+namespace: "kube-system"

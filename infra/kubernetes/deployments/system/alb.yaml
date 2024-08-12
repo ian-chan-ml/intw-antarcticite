@@ -1,0 +1,2 @@
+path: "infra/kubernetes/kustomize/aws-load-balancer-controller"
+namespace: "kube-system"

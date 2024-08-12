@@ -1,0 +1,2 @@
+path: "infra/kubernetes/kustomize/metrics-server"
+namespace: "kube-system"
