@@ -43,10 +43,6 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        volumeMounts:
-        - name: temporal-cert
-          mountPath: "/opt/cert/"
-          readOnly: true
         livenessProbe:
 {{ toYaml .Values.livenessProbe | trim | indent 10 }}
         readinessProbe:
