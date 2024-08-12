@@ -11,7 +11,7 @@ module "antarticite-eks-1-karpenter" {
 module "lb_controller_irsa" {
   source                                 = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version                                = "~> 5.0"
-  create_role                            = var.create
+  create_role                            = true
   role_name                              = "AWSLBController-${module.antarticite-eks-1.cluster_name}"
   attach_load_balancer_controller_policy = true
 

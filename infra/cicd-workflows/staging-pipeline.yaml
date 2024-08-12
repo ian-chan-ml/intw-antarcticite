@@ -18,7 +18,7 @@ steps:
     commands:
       - export RELEASE_IMAGE_TAG="${{CF_SHORT_REVISION}}"
       - cf_export RELEASE_IMAGE_TAG
-      - cf_export SERVER_IMAGE_NAME=ian-chan-ml/antarcticite-be
+      - cf_export SERVER_IMAGE_NAME=antarcticite-be
 
   UnitTesting:
     title: Running Unit tests directly

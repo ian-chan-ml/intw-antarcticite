@@ -17,3 +17,23 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "antarcticite-be.fullname" . }}-canary
+  labels:
+    app.kubernetes.io/name: {{ include "antarcticite-be.name" . }}
+    helm.sh/chart: {{ include "antarcticite-be.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: {{ include "antarcticite-be.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

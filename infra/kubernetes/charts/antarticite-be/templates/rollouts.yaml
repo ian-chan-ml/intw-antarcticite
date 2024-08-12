@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: antarcticite-be
+spec:
+  strategy:
+    canary:
+      # canaryService and stableService are references to Services which the Rollout will modify
+      # to target the canary ReplicaSet and stable ReplicaSet respectively (required).
+      canaryService: antarcticite-be-canary
+      stableService: antarcticite-be
+      trafficRouting:
+        alb:
+          # The referenced ingress will be injected with a custom action annotation, directing
+          # the AWS Load Balancer Controller to split traffic between the canary and stable
+          # Service, according to the desired traffic weight (required).
+          ingress: antarcticite-be
+          # Service port is the port which the Service listens on (required).
+          servicePort: 443
