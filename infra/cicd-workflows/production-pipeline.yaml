@@ -1,0 +1,59 @@
+version: '1.0'
+stages:
+  - checkout
+  - test
+  - build
+  - deploy
+steps:
+  main_clone:
+    title: Cloning main repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_REVISION}}'
+    stage: checkout
+
+  CreateReleaseVariables:
+    stage: build
+    image: alpine:latest
+    commands:
+      - export RELEASE_IMAGE_TAG="${{CF_SHORT_REVISION}}"
+      - cf_export RELEASE_IMAGE_TAG
+      - cf_export SERVER_IMAGE_NAME=ian-chan-ml/antarcticite-be
+
+  UnitTesting:
+    title: Running Unit tests directly
+    stage: test
+    image: golang:1.22
+    working_directory: ./app/backend
+    commands:
+      - go test -v
+
+  BuildDockerImage:
+    title: Building Docker Image
+    type: build
+    stage: build
+    image_name: ${{SERVER_IMAGE_NAME}}
+    working_directory: ./app/backend
+    tag: '${{RELEASE_IMAGE_TAG}}'
+    dockerfile: Dockerfile
+
+  UpdateGitOpsDeploy:
+    title: Updating Image Tag
+    stage: deploy
+    type: freestyle
+    working_directory: .
+    arguments:
+      image: 'bitnami/kubectl:latest'
+      commands:
+        - apk update && apk add git curl sed
+        - curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        - chmod +x /usr/local/bin/argocd
+        - echo "Updating image tag in ArgoCD deployment file..."
+        - "sed -i 's|tag: .*|tag: ${RELEASE_IMAGE_TAG}|' ./infra/kubernetes/deployments/gitops/antarticite-be.yaml"
+        - git config --global user.email "cicd@quanianitis.com"
+        - git config --global user.name "CI Bot"
+        - git add infra/kubernetes/deployments/gitops/antarticite-be.yaml
+        - git commit -m "Update image tag to ${RELEASE_IMAGE_TAG}"
+        - git push origin '${{CF_BRANCH}}'
+        - argocd login $(kubectl get service argocd-server -n argocd --output=jsonpath='{.status.loadBalancer.ingress[0].hostname}') --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure
+        - argocd app sync -l app.kubernetes.io/instance=antarcticite-be
