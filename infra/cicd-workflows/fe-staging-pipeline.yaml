@@ -1,0 +1,31 @@
+version: '1.0'
+stages:
+- clone
+- build
+steps:
+  main_clone:
+    stage: clone
+    title: Cloning main repository...
+    type: git-clone
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_REVISION}}'
+    git: github
+  CreateReleaseVariables:
+    stage: build
+    image: moneylionbot/alpine-build-essentials:latest
+    working_directory: ./streamlit/
+    commands:
+    - export RELEASE_IMAGE_TAG="${{CF_SHORT_REVISION}}"
+    - cf_export RELEASE_IMAGE_TAG
+    - export RELEASE_VERSION="${{CF_SHORT_REVISION}}"
+    - cf_export RELEASE_VERSION
+    - cf_export API_IMAGE_NAME=antarticite-fe
+  BuildAndPushAPIImage:
+    stage: build
+    title: Build and push Docker Image
+    type: build
+    image_name: ${{API_IMAGE_NAME}}
+    working_directory: ./
+    tag: '${{RELEASE_IMAGE_TAG}}'
+    dockerfile: Dockerfile
+    registry: ecr
