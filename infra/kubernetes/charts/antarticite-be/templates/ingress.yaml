@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
+metadata:
   labels:
     app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
-metadata:
   annotations:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:940482441378:certificate/dfc6bb87-7f1a-4248-9d9b-119becacbf10
     alb.ingress.kubernetes.io/scheme: internal
