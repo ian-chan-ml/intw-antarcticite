@@ -1,0 +1,14 @@
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::940482441378:role/KarpenterControllerRoleIRSA-antarticite-eks-1
+controller:
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 1
+      memory: 512Mi
+settings:
+  clusterName: "antarticite-eks-1"
+  featureGates: # enabled to allow auto node upgrade https://karpenter.sh/v0.32/reference/settings/#feature-gates
+    drift: "true"
