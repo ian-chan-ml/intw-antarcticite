@@ -16,6 +16,7 @@ func main() {
 	osstats := &OSMetrics{}
 
 	tracer.Start()
+	defer tracer.Stop()
 
 	// Helloworld endpoint
 	http.HandleFunc("/", getHelloString)
@@ -35,6 +36,4 @@ func main() {
 	fmt.Println("Serving requests on port 8080")
 	err := http.ListenAndServe(":8080", nil)
 	log.Fatal(err)
-
-	defer tracer.Stop()
 }

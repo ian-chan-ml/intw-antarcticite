@@ -21,10 +21,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "antarcticite-be.fullname" . }}-canary
+  name: {{ include "antarticite-be.fullname" . }}-canary
   labels:
-    app.kubernetes.io/name: {{ include "antarcticite-be.name" . }}
-    helm.sh/chart: {{ include "antarcticite-be.chart" . }}
+    app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
+    helm.sh/chart: {{ include "antarticite-be.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
@@ -35,5 +35,5 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app.kubernetes.io/name: {{ include "antarcticite-be.name" . }}
+    app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
