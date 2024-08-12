@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: antarticite-be
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination: 
+    namespace: production
+    server: https://F0BEDA1494FD804CC52BF1085F4DC98E.gr7.ap-southeast-3.eks.amazonaws.com
+  project: 'antarcticite'
+  source:
+    helm:
+      releaseName: antarticite-be
+      valueFiles:
+      - production-values.yaml
+      values: |
+        image:
+          tag: latest
+    path: infra/kubernetes/charts/antarticite-be
+    repoURL: https://github.com/ian-chan-ml/intw-antarcticite
+    targetRevision: HEAD
+  syncPolicy: {}
