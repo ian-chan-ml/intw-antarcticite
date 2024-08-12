@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cert-manager
+
+resources:
+  - https://github.com/cert-manager/cert-manager/releases/download/v1.13.2/cert-manager.yaml
+  # - externalsecret.yaml
+  # - secretstore.yaml
+
+# patches:
+#   - target:
+#       kind: ServiceAccount
+#       name: cert-manager
+#     patch: |
+#       - { op: add, path: /metadata/annotations/eks.amazonaws.com~1role-arn, value: "arn:aws:iam::064335175959:role/eks-prod-ops-cert-manager"}
