@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - https://github.com/kubernetes/kube-state-metrics/examples/autosharding?ref=v2.9.2
+
+patches:
+  - target:
+      kind: Service
+    patch: |-
+      - {op: add, path: /metadata/annotations/prometheus.io~1scrape, value: "true"}
