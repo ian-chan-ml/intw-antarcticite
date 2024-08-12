@@ -5,11 +5,11 @@ metadata:
     app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
   annotations:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:940482441378:certificate/dfc6bb87-7f1a-4248-9d9b-119becacbf10
-    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/healthcheck-path: /
     alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
     alb.ingress.kubernetes.io/scheme: internal
-    alb.ingress.kubernetes.io/security-groups: "sg-0eea28700825173e1, sg-0998c24091eb35480"
+    alb.ingress.kubernetes.io/security-groups: "subnet-04edcb1a3054f255d, subnet-063366423ff1cd64a"
     alb.ingress.kubernetes.io/subnets: subnet-020d1663433984d1c,subnet-0744bb2ff6c2c5f30
     alb.ingress.kubernetes.io/success-codes: 200,307
     alb.ingress.kubernetes.io/backend-protocol: HTTP
