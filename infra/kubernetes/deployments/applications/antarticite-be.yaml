@@ -1,0 +1,4 @@
+image: 940482441378.dkr.ecr.ap-southeast-3.amazonaws.com/antarticite-be
+imageTag: latest
+path: infra/kubernetes/charts/antarticite-be
+namespace: production

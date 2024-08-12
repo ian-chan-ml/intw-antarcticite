@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: gitops-system
+spec:
+  goTemplate: true
+  # goTemplateOptions: ["missingkey=error"]
+  generators:
+    - clusters: {}
+    - git:
+        repoURL: git@github.com/ian-chan-ml/intw-antarcticite.git
+        revision: HEAD
+        files:
+          - path: "infra/kubernetes/deployments/**.yaml"
+  template:
+    metadata:
+      name: 'antarcticite-{{ trimSuffix ".yaml" (default "unknown" .path.filenameNormalized) }}'
+    spec:
+      project: default
+      source:
+        repoURL: ssh://git@github.com/ian-chan-ml/intw-antarcticite.git
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
+        path: "{{ .path }}"
+      destination:
+        name: in-cluster
+        namespace: '{{ default "default" .namespace }}'
+    

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applications-appset
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/ian-chan-ml/intw-antarcticite
+        revision: HEAD
+        files:
+          - path: "infra/kubernetes/deployment/applications/*.yaml"
+  template:
+    metadata:
+      name: '{{ slice .path.segments 2 | join "." }}.{{ trimSuffix ".yaml" .path.filenameNormalized }}'
+    spec:
+      project: '{{ default "antarcticite" .project }}'
+      source:
+        repoURL: https://github.com/ian-chan-ml/intw-antarcticite
+        targetRevision: '{{ default "HEAD" .targetRevision }}'
+        path: "{{ .path }}"
+        kustomize:
+          images:
+            - "placeholder={{ .image }}:{{ .imageTag }}"
+          namePrefix: '{{ default "" .namePrefix }}'
+          nameSuffix: '{{ default "" .nameSuffix }}'
+      destination:
+        server: https://F0BEDA1494FD804CC52BF1085F4DC98E.gr7.ap-southeast-3.eks.amazonaws.com
+        namespace: '{{ default "production" .namespace }}'
+      syncPolicy:
+        syncOptions:
+        - CreateNamespace=true
