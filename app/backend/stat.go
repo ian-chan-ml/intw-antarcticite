@@ -20,6 +20,7 @@ type MetricsHandler interface {
 }
 
 func (s *OSMetrics) MemoryMetrics(w http.ResponseWriter, r *http.Request) {
+	logServiceRequest(r)
 	memory, err := mem.VirtualMemory()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -32,6 +33,7 @@ func (s *OSMetrics) MemoryMetrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *OSMetrics) CPUMetrics(w http.ResponseWriter, r *http.Request) {
+	logServiceRequest(r)
 	before, err := cpu.Times(false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -59,6 +61,7 @@ func (s *OSMetrics) CPUMetrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *OSMetrics) UptimeMetrics(w http.ResponseWriter, r *http.Request) {
+	logServiceRequest(r)
 	uptime, err := host.Uptime()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,6 +72,7 @@ func (s *OSMetrics) UptimeMetrics(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *OSMetrics) NetworkMetrics(w http.ResponseWriter, r *http.Request) {
+	logServiceRequest(r)
 	networkStats, err := net.IOCounters(false)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
