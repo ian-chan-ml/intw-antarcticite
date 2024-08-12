@@ -1,31 +1,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
-metadata:
-  name: {{ include "antarticite-be.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "antarticite-be.name" . }}
+metadata:
   annotations:
-    kubernetes.io/ingress.class: "nginx-internal"
-  annotations:
-    kubernetes.io/ingress.class: "nginx-internal"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-{{- if (eq .Values.releaseStage "production") }}
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:940482441378:certificate/dfc6bb87-7f1a-4248-9d9b-119becacbf10
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/security-groups: "sg-0eea28700825173e1, sg-0998c24091eb35480"
+    alb.ingress.kubernetes.io/subnets: subnet-020d1663433984d1c,subnet-0744bb2ff6c2c5f30
+    alb.ingress.kubernetes.io/success-codes: 200,307
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443, "HTTP":80}]'
+    kubernetes.io/ingress.class: alb
+  name: {{ include "antarticite-be.fullname" . }}
 spec:
-  tls:
-  - secretName: moneylion-tls-production
-    hosts:
-    - "*.moneylion.com"
   rules:
-  - host: "{{ .Release.Name }}.moneylion.com"
-{{- else }}
-spec:
-  tls:
-  - secretName: moneylion-tls-development
-    hosts:
-    - "*.moneylion.io"
-  rules:
-  - host: "{{ .Release.Name }}.moneylion.io"
-{{- end }}
+  - host: "antarcticite-be.quanianitis.com"
     http:
       paths:
       - path: /
@@ -35,3 +29,4 @@ spec:
             name: {{ include "antarticite-be.fullname" . }}
             port:
               number: {{ .Values.service.port }}
+        pathType: Prefix

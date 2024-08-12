@@ -1,8 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources:
-- https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.6.0/v2_6_0_full.yaml
+# resources:
+# - https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/download/v2.6.0/v2_6_0_full.yaml
+
+namespace: kube-system
 
 patches:
 - target:
@@ -14,3 +16,13 @@ patches:
       path: /metadata/annotations
       value:
         eks.amazonaws.com/role-arn: arn:aws:iam::940482441378:role/AWSLBController-antarticite-eks-1
+
+
+helmCharts:
+- name: eks/aws-load-balancer-controller
+  version: 2.7.0
+  repo: https://aws.github.io/eks-charts
+  valuesFile: values.yaml
+  releaseName: eks/aws-load-balancer-controller
+  namespace: kube-system
+  includeCRDs: true

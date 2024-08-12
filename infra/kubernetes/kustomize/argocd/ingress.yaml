@@ -1,7 +1,5 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
-  labels:
-    app.kubernetes.io/name: {{ include "antarticite-fe.name" . }}
 metadata:
   annotations:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-3:940482441378:certificate/dfc6bb87-7f1a-4248-9d9b-119becacbf10
@@ -16,17 +14,17 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443, "HTTP":80}]'
     kubernetes.io/ingress.class: alb
-  name: {{ include "antarticite-fe.fullname" . }}
+  name: argocd
+  namespace: argocd
 spec:
   rules:
-  - host: "antarcticite-fe.quanianitis.com"
+  - host: argocd.quanianitis.com
     http:
       paths:
       - path: /
-        pathType: ImplementationSpecific
         backend:
           service:
-            name: {{ include "antarticite-fe.fullname" . }}
+            name: argocd-server
             port:
-              number: {{ .Values.service.port }}
+              number: 443
         pathType: Prefix
